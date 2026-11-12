@@ -1,4 +1,4 @@
-<!-- # Estoque de Vídeos
+# Estoque de Vídeos
 
 Página de acompanhamento do estoque de vídeos de um canal de YouTube: fila de postagem, plano por dia, histórico de desempenho, totais mensais do canal e relatório mensal.
 
@@ -27,4 +27,3 @@ Nenhum dado de canal, vídeo ou receita está nos arquivos deste repositório.
 ## Como abrir
 
 Abra `index.html` no navegador. Para ver dados reais, a página precisa rodar dentro do claude.ai como artefato.
- -->

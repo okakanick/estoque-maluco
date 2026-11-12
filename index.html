@@ -1,0 +1,487 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Estoque de Vídeos</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="styles.css">
+
+<div class="wrap">
+  <header class="mast">
+    <div class="mast-text">
+      <div class="mast-k"><p class="eyebrow" id="eyebrow">Canal · postagem toda quarta às 18h</p><span class="ver" id="verChip">1.0</span></div>
+      <h1><span class="g">Estoque de Vídeos</span></h1>
+    </div>
+    <div class="mast-acts">
+      <a class="studio" href="https://studio.youtube.com/" target="_blank" rel="noopener noreferrer"><svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0.75" y="0.75" width="16.5" height="11.5" rx="3.2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7.2 4v5l4.3-2.5z" fill="currentColor"/></svg>YouTube Studio</a>
+      <button class="primary" id="openForm" type="button">Adicionar vídeo</button>
+    </div>
+    <div class="stats" id="stats">
+      <div class="stat"><span class="stat-k">Próxima postagem</span><span class="stat-v" id="stWhen">–</span><span class="stat-s" id="stWhenS"></span></div>
+      <div class="stat"><span class="stat-k">No estoque</span><span class="stat-v" id="n">–</span><span class="stat-s" id="stFol"></span></div>
+      <div class="stat"><span class="stat-k">Fórmula</span><span class="stat-v" id="stVer">1.0</span><span class="stat-s" id="stVerS"></span></div>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Seções">
+    <button type="button" role="tab" id="tab-estoque" aria-controls="tabEstoque" aria-selected="true">Estoque<span class="tab-n" id="tn-estoque"></span></button>
+    <button type="button" role="tab" id="tab-historico" aria-controls="tabHist" aria-selected="false">Histórico<span class="tab-n" id="tn-historico"></span></button>
+    <button type="button" role="tab" id="tab-canal" aria-controls="tabCanal" aria-selected="false">Canal<span class="tab-n" id="tn-canal"></span></button>
+    <button type="button" role="tab" id="tab-relatorio" aria-controls="tabRel" aria-selected="false">Relatório<span class="tab-n" id="tn-relatorio"></span></button>
+  </nav>
+
+  <div class="tabpane" id="tabEstoque" role="tabpanel" aria-labelledby="tab-estoque">
+    <form id="form" class="card" hidden>
+      <div class="form-head"><b id="formTitle">Novo vídeo</b><span class="hint" id="formHint"></span></div>
+      <label class="full">Título<input id="f-titulo" required maxlength="160" placeholder="Título do vídeo"></label>
+      <label>Jogo<input id="f-jogo" maxlength="120"></label>
+      <label>Saga<input id="f-saga" maxlength="80" list="sagaList" placeholder="Tekken, GTA…"><datalist id="sagaList"></datalist></label>
+      <div class="icon-field"><span class="icon-lab" id="f-icone-lab">Ícone</span>
+        <div class="seg icon-seg" role="group" aria-labelledby="f-icone-lab" id="f-icone-seg"><button type="button" data-ic="video" aria-pressed="true"><span aria-hidden="true">🎬</span> Vídeo</button><button type="button" data-ic="estrela" aria-pressed="false"><span aria-hidden="true">⭐</span> Especial</button><button type="button" data-ic="tesoura" aria-pressed="false"><span aria-hidden="true">✂️</span> Fechando a Conta</button></div>
+        <input type="hidden" id="f-icone" value="video"><span class="hint" id="f-icone-hint">Vídeo de jogo: entra na nota e na fila.</span>
+      </div>
+      <label>Duração (min)<input id="f-duracao" type="number" min="1" max="300" inputmode="numeric"></label>
+      <label>No estoque desde<input id="f-pronto" type="date"></label>
+      <label>Reservar para um dia de postagem<input id="f-reserva" type="date"><span class="hint" id="f-reserva-hint">Opcional. O vídeo sai da disputa da fila até esse dia.</span></label>
+      <label>Ano de lançamento do jogo<input id="f-lancamento" type="number" min="1950" max="2100" inputmode="numeric" placeholder="2001"><span class="hint">Na mesma saga, os vídeos sobem na ordem de lançamento dos jogos. Em remake ou remaster, use o ano do original. A tarefa de quarta preenche se ficar vazio.</span></label>
+      <div class="full capa-field" id="capaField" hidden>
+        <div class="capa-prev" id="f-capa-prev">3:4</div>
+        <label>Capa do jogo<input id="f-capa" type="file" accept="image/*"><span class="hint">Imagem vertical, como a caixa do jogo. JPG, PNG ou WebP.</span></label>
+      </div>
+      <label class="full">Notas<textarea id="f-notas" maxlength="600" placeholder="Gancho do momento, lançamento próximo…"></textarea></label>
+      <p class="msg full" id="formMsg" hidden></p>
+      <div class="actions full">
+        <button type="button" id="cancel">Cancelar</button>
+        <button class="primary" type="submit" id="save">Salvar</button>
+      </div>
+    </form>
+
+
+
+
+
+    <section id="trendSec" hidden>
+      <div class="sec-head"><div><p class="eyebrow">Gráfico</p><h2>Notas por dia de postagem</h2></div>
+        <div class="seg" role="group" aria-label="Forma de ver" id="estView"><button type="button" data-v="mapa">Mapa de calor</button><button type="button" data-v="tendencia">Tendência</button></div>
+      </div>
+      <div class="card panel">
+        <div id="mapView" class="mview">
+          <p class="note">Nota projetada de cada jogo nos próximos 8 dias de postagem. Cada linha usa a cor da capa do jogo; quanto mais forte a cor, maior a nota. O contorno marca o melhor dia do jogo e a barra embaixo da nota, o dia dele no plano.</p>
+          <div class="hm-box chart-wrap" id="mapWrap">
+            <div class="hm" id="qmap" role="grid" aria-label="Nota projetada por jogo e por quarta"></div>
+            <div class="tip" id="mapTip" hidden></div>
+          </div>
+          <div class="map-key">
+            <span class="ramp" aria-label="Intensidade da cor do jogo, do menor ao maior valor do mapa"><span id="rampLo">0</span><i class="b0"></i><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="b4"></i><span id="rampHi">50</span></span>
+            <span class="sw"><span class="box best"></span>melhor dia do jogo</span>
+            <span class="sw"><span class="box inplan"></span>dia no plano</span>
+            <span class="sw"><span class="dotk"></span>evento até o próximo dia</span>
+            <span class="sw"><span class="box res"></span>reservado</span>
+          </div>
+          <div class="plan" id="plan" hidden></div>
+        </div>
+        <div id="trendView" class="tview" hidden>
+          <ul class="legend" id="tLegend"></ul>
+          <div class="chart-wrap" id="tWrap" tabindex="0" aria-label="Tendência das notas. Use as setas para percorrer as quartas.">
+            <div id="tChart"></div>
+            <div class="tip" id="tTip" hidden></div>
+          </div>
+          <div class="tb-row"><span class="sec-note" id="tRangeTxt"></span><button type="button" class="btn-sm" id="tReset" hidden>Ver tudo</button></div>
+          <div class="chart-wrap tbrush" id="tBrush"></div>
+          <div class="chart-key">
+            <span><svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="21" y2="4" stroke="currentColor" stroke-width="2"/></svg>nota medida</span>
+            <span><svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="21" y2="4" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3"/></svg>projeção</span>
+            <span><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="2"/></svg>melhor dia</span>
+            <span><svg width="14" height="14" aria-hidden="true"><path d="M7 1 l6 6 l-6 6 l-6 -6 z" fill="none" stroke="var(--ok)" stroke-width="2"/></svg>reserva</span>
+          </div>
+        </div>
+        <div id="clash"></div>
+        <p class="note" id="projNote"></p>
+        <p class="acc" id="acc" hidden></p>
+        <details class="table-box">
+          <summary>Notas medidas em cada quarta, em tabela</summary>
+          <div class="tbl-scroll" id="cmpTable"></div>
+        </details>
+      </div>
+    </section>
+
+    <section id="planSec" class="plano" hidden aria-labelledby="planTitle">
+      <div class="sec-head"><div><p class="eyebrow">Decisão</p><h2 id="planTitle">Plano de postagem</h2></div>
+        <div class="row"><span class="seal" id="seal" hidden>Prévia</span><div class="seg" role="group" aria-label="Fila mostrada" id="rankSrc" hidden><button type="button" data-v="previa">Prévia</button><button type="button" data-v="oficial">Oficial</button></div></div>
+      </div>
+      <p class="plan-meta" id="edMeta"></p>
+      <div class="lead-box"><p class="top-lead" id="topLead" hidden></p><button type="button" class="link-btn qmore" id="topLeadMore" hidden>ler mais</button></div>
+      <div id="planLead"></div>
+      <ol class="queue plan-list" id="planList" aria-label="Próximos dias de postagem"></ol>
+      <p class="sec-note plan-sum" id="planSum"></p>
+    </section>
+
+    <section class="tier tier-wait" id="starSec" hidden>
+      <div class="tier-h"><div class="tier-r" aria-hidden="true">⭐</div><div class="tier-hx"><div class="tier-n">Especiais aguardando data</div><div class="tier-s">fora da nota · entram no plano quando ganham uma reserva</div></div></div>
+      <ol class="queue" id="stars"></ol>
+    </section>
+
+    <section class="card panel ganchos" id="ganchoSec" hidden>
+      <div class="sec-head"><div><p class="eyebrow">Agenda</p><h2>Próximos ganchos</h2></div><span class="sec-note">próximos 60 dias</span></div>
+      <ol class="tl" id="ganchos"></ol>
+    </section>
+
+    <p class="empty" id="empty">Os vídeos do estoque aparecem aqui com a capa do jogo, a nota de 0 a 100 e o dia de cada um no plano.</p>
+
+        <details class="how how-wide">
+          <summary>Como a nota é calculada</summary>
+          <div class="how-body">
+            <p>Na madrugada de quarta, à 1h, o Claude mede cada vídeo do estoque e calcula a nota de 0 a 100. Desde a 1.0, a fila é o plano: a página projeta a nota de cada jogo nos próximos 8 dias de postagem e distribui um vídeo por dia somando a maior nota possível. A nota mede o quanto aquele dia é bom para cada vídeo, comparando o jogo só com ele mesmo: todo vídeo vai ao ar, o plano só decide quando. Nada compara o vídeo com o histórico do canal, então franquia obscura não fica para trás por ser obscura. Uma semana normal, sem evento, dá 28. A escala é dividida em tiers de 10 pontos com significado fixo: 20 a 29 é semana normal, 40 a 49 está aquecendo, 50 a 59 tem um motor ligado, 70 a 79 é janela forte, 90 a 100 é o momento histórico.</p>
+            <dl>
+              <dt>Momento, até 45</dt>
+              <dd>Eventos com data ligados ao jogo, com a régua da v0.5 na escala de 45. Tamanho (35, 25, 15 ou 8) vezes a relação (1 o próprio jogo, 0,6 a franquia, 0,3 tangencial) vezes o peso da distância: 1 na semana do evento e também no dia seguinte a ele, 0,1 do 2º ao 10º dia depois (saturação), 0,8 de 11 a 60 dias depois (eco), 0,3 até 90. Um evento grande do próprio jogo na semana vale 32; no eco, 26.</dd>
+              <dt>Vizinhança, até 40</dt>
+              <dd>Views, nos últimos 30 dias, de vídeos de outros canais sobre o jogo (e 60% dos da franquia), pela API do YouTube, comparadas com o normal do próprio jogo nas últimas 4 quartas. No normal vale 20; três vezes o normal ou mais vale 40; um terço ou menos vale 0. É a pista dos sugeridos: quem assiste esses vídeos pode receber o do canal ao lado.</dd>
+              <dt>Interesse, até 15</dt>
+              <dd>Busca no autocompletar do YouTube (60%) e Twitch e Steam (40%), medidos como na v0.5 e comparados com o normal do próprio jogo. No normal vale 7,5. Pesa pouco porque a busca traz de 1% a 2% das views do canal.</dd>
+              <dt>Vídeo novo</dt>
+              <dd>Sem medição anterior, vizinhança e interesse começam no normal (20 e 7,5): só o momento mexe na nota da primeira quarta.</dd>
+              <dt>Ícones</dt>
+              <dd>🎬 vídeo entra na nota e na fila. ⭐ especial fica fora da nota, da mediana e dos testes, e só sobe na data reservada; sem reserva, fica aguardando data. ✂️ Fechando a Conta entra na nota pela franquia inteira e sobe depois de todos os jogos da saga que estejam no estoque. O ícone é escolhido no cadastro do vídeo.</dd>
+              <dt>Faixa provável</dt>
+              <dd>A nota mais ou menos 4 pontos, o erro de referência (vira o erro medido depois de 3 quartas conferidas).</dd>
+              <dt>Plano (1.0)</dt>
+              <dd>Para cada vídeo, a nota de cada um dos próximos 8 dias de postagem: os componentes medidos na quarta mantidos e o momento recalculado para o dia, pelos eventos já confirmados. O plano escolhe um vídeo por dia somando a maior nota possível. Dia com vídeo marcado como postado ou com especial reservado fica fora; vídeo reservado fica no dia dele; nenhum vídeo sai antes do anterior da sua saga. Em empate de soma, fica o arranjo mais perto da ordem por nota. Os dias depois da janela seguem a ordem por nota. O plano se refaz na hora quando um vídeo é postado, reservado ou cadastrado, e a tarefa de quarta grava o mesmo plano.</dd>
+              <dt>Regra da saga</dt>
+              <dd>A saga do cadastro é o grupo de ordem: pode ser uma franquia, como Grand Theft Auto, ou um grupo maior, como FromSoftware. Dentro dela, os vídeos sobem na ordem de lançamento do jogo original, e o ✂️ vem por último. A saga entra na fila pela maior nota entre os seus vídeos: um Skyrim forte puxa o Arena para a frente, e o Skyrim vem logo depois. Cada vídeo mantém a própria nota e o próprio tier. O plano e a tarefa de quarta seguem a mesma regra.</dd>
+              <dt>Mapa de calor</dt>
+              <dd>Os próximos 8 dias de postagem de cada jogo, com a mesma projeção do plano. O contorno marca o melhor dia do jogo e a barra embaixo da nota, o dia dele no plano.</dd>
+              <dt>Reservas e dias de postagem</dt>
+              <dd>Os dias de postagem vêm da configuração do banco: quarta às 18h, e quarta e sábado às 18h a partir de dezembro de 2026. Vídeo reservado continua ganhando nota, mas entra no plano só no dia dele.</dd>
+              <dt>Postado</dt>
+              <dd>Ao confirmar a postagem, o vídeo vai para o Histórico, em maturação. Lá entra uma leitura por vez: views e impressões nos dias 7, 14, 21 e 28. No 28º dia entram os cinco números do Studio, o resultado fecha e o multiplicador congela com a mediana dos últimos 12 meses daquele dia.</dd>
+              <dt>Cores</dt>
+              <dd>Cada jogo usa a cor mais forte da própria capa, clareada ou escurecida até ter contraste com o fundo e afastada da cor de outro jogo parecido. Essa cor pinta o card do jogo, o anel da nota, a linha dele no mapa de calor, o calendário e a maturação, e o brilho do topo da página segue os dois primeiros da fila. Sem capa, a paleta padrão.</dd>
+              <dt>Fontes</dt>
+              <dd>API do YouTube, autocompletar do YouTube e do Google, buscas em alta do Google Trends Brasil, SullyGnome (Twitch), SteamCharts, SteamDB, loja Steam e notícias pela busca na web. Notas de quartas anteriores ao sistema são estimativas e aparecem com ≈ na tabela de notas.</dd>
+              <dt>Versões</dt>
+              <dd class="vers">
+                <span><b>v0.1 · 09/10/2026</b> Gancho 45 + tração 35 + volume 20, em escala relativa ao estoque.</span>
+                <span><b>v0.2 · 09/10/2026</b> Escala absoluta de 0 a 100: audiência 50 + momento 35 + tração 15.</span>
+                <span><b>v0.3 · fila de 14/10/2026</b> A audiência vira demanda: 60% busca no YouTube e 40% Twitch e Steam.</span>
+                <span><b>v0.4 · 13/10/2026, não chegou a rodar</b> O momento passa a valorizar o eco depois do evento.</span>
+                <span><b>v0.5 · filas de 14/10 e 21/10/2026</b> Régua do momento calibrada com os 42 vídeos fechados: eco a 0,8 de 11 a 60 dias e saturação a 0,1.</span>
+                <span><b>v0.5.1 · 20/10/2026, manutenção</b> Limpeza da página e do histórico e gráfico de tendência novo.</span>
+                <span><b>v0.6 · primeira fila oficial em 28/10/2026</b> Interesse 10, afinidade 20, formato 15, momento 35 e vizinhança 20. No retroteste com os 44 vídeos fechados, a parte que dá para reconstruir teve correlação por ordem de 0,41 com o resultado, contra 0,36 da v0.5 e 0 da ordem ingênua. Textos jornalísticos, sem sugestão sobre o vídeo, fila em tiers, dois dias de postagem por semana a partir de dezembro e mediana dos últimos 12 meses.</span>
+                <span><b>v0.6.1 · 23/10/2026, manutenção</b> As leituras passam a ser nos dias 7, 14, 21 e 28, os mesmos marcos da corrida, e valem para o próprio dia mesmo quando são registradas depois. A página foi dividida em arquivos e monta só a aba aberta. Nenhuma conta mudou.</span>
+                <span><b>v0.6.2 · 28/10/2026, manutenção</b> A aba Estoque passa a ser lida como um jornal: primeiro o gráfico, depois o editorial, a decisão da semana e uma matéria por jogo com a agenda ao lado, e por fim a fila em tiers em linhas compactas. Layout próprio para computador e dados técnicos de coleta fora da página. Nenhuma conta mudou.</span>
+                <span><b>v0.6.3 · 29/10/2026, manutenção</b> Ordem da franquia: na mesma saga, os vídeos sobem na ordem de lançamento dos jogos (campo novo de ano de lançamento), na fila, no calendário, no plano sugerido e na tarefa de quarta. Nenhuma nota mudou.</span>
+                <span><b>v0.6.4 · 29/10/2026, manutenção</b> Botão "Exportar capa" no jornal: a primeira página da edição em imagem de 1080×1350, para mandar no grupo dos editores. Nenhuma nota mudou.</span>
+                <span><b>v0.6.5 · 29/10/2026, manutenção</b> A capa usa o tema da semana como título e convida os comentários no grupo; entra a edição zero, que apresenta o jornal aos editores. Nenhuma nota mudou.</span>
+                <span><b>v0.7 · primeira fila oficial em 04/11/2026</b> Momento 45, vizinhança 40 e interesse 15. Afinidade e formato saem: a nota mede o quanto a semana é boa para cada vídeo, comparando o jogo só com ele mesmo. O formato some e entram os ícones 🎬, ⭐ e ✂️; a regra da saga passa a puxar os jogos anteriores pela nota do mais forte. A v0.6 encerrou com 1 vídeo postado.</span>
+                <span><b>v0.7.1 · 29/10/2026, manutenção</b> O jornal sai da página: ele passa a ser montado pelo Fluxo 5, depois que o vídeo da semana é escolhido, em 1 a 4 imagens para o grupo dos editores. Na fila, cada vídeo fica com uma leitura curta. A linha da tendência segue contínua entre versões, com o trecho antigo em tom claro. Nenhuma nota mudou.</span>
+                <span><b>v0.7.2 · 31/10/2026, correção</b> A fila segue só a nota, sem desempate: saem o empate técnico, a perda ao esperar e o tempo no estoque. Nenhuma nota mudou.</span>
+                <span><b>v0.7.3 · 31/10/2026, correção</b> Editar um vídeo postado abre um painel próprio, pelo botão ao lado do nome; a página não redesenha enquanto você digita. Nenhuma nota mudou.</span>
+                <span><b>v0.7.4 · 01/11/2026, manutenção</b> Aba Canal com os totais do canal mês a mês e o acumulado desde o primeiro mês, em gráficos separados. O relatório mensal deixa de ser automático e sai quando os números do mês são enviados do Studio. Nenhuma nota mudou.</span>
+                <span><b>v0.7.5 · 03/11/2026, manutenção</b> A tarefa de quarta passa a rodar à 1h. A aba Estoque abre com o gráfico, que mostra de início 2 quartas para trás e 2 para a frente e abre até o primeiro ponto do estoque ou até 8 semanas à frente. Depois vem a decisão da semana: os 4 primeiros da fila com um resumo da tarefa, a composição da nota e a distância para o vídeo logo abaixo, com os números do que pesa recolhidos. Histórico em três partes e layout padronizado. Nenhuma nota mudou.</span>
+                <span><b>v0.7.6 · 04/11/2026, correção</b> A tarefa de quarta deixa de gravar leituras pela API dos vídeos postados; as leituras em maturação vêm só do Studio. Nenhuma nota mudou.</span>
+                <span><b>v0.8 · fila de 04/11/2026 refeita</b> O dia seguinte ao evento passa a contar como semana do evento, com peso 1; a saturação, com peso 0,1, vai do 2º ao 10º dia. Só a nota de Arena mudou na fila de 04/11 (de 29 para 40), porque a revelação de The Elder Scrolls VI: Sentinel foi no dia 03/11. A fila de 04/11 foi a única da v0.7 e passou a ser a primeira da v0.8.</span>
+                <span><b>1.0 · 08/11/2026</b> Projeto e fórmula passam a ter a mesma versão. A v0.8 vira 1.0 sem mudar nenhuma conta da nota, e a fila de 04/11 conta como a primeira da 1.0. O que muda é a ordem: o plano vira a fila, um vídeo por dia de postagem nos próximos 8 dias (quarta e sábado), somando a maior nota projetada; especial reservado e vídeo já postado ocupam o dia deles. A aba Estoque abre com o gráfico, com as linhas na ordem do plano, e logo abaixo vem o plano, que junta a decisão, a fila e o calendário numa lista só; o card Próxima postagem diz qual vídeo sobe. Correções de celular nas abas, no alternador do gráfico, no Histórico e nos rótulos dos gráficos. A tarefa de quarta passa a ser uma só. Mudança nas contas sobe para 1.1; correção sem mudar contas vira 1.0.x.</span>
+                <span>Notas de versões diferentes não se comparam: o trecho de versões anteriores aparece em tom claro na tendência, e a acurácia mostra só a versão em uso. A v0.8 e a 1.0 têm a mesma conta e contam como uma versão só.</span>
+              </dd>
+            </dl>
+          </div>
+        </details>
+  </div>
+
+  <div class="tabpane" id="tabHist" role="tabpanel" aria-labelledby="tab-historico" hidden>
+    <nav class="subnav" id="hNav" aria-label="Partes do Histórico">
+      <button type="button" data-v="mat">Em maturação<span class="tab-n" id="hnN-mat"></span></button>
+      <button type="button" data-v="res">Resultados</button>
+      <button type="button" data-v="tab">Vídeos e diário<span class="tab-n" id="hnN-tab"></span></button>
+    </nav>
+    <div class="hfilt" id="hFiltSec" hidden>
+      <div class="hfilt-row"><div class="tb-left" id="hFilt"></div><div class="seg" role="group" aria-label="Período" id="hPer"></div><span class="note">filtra resultados e tabela</span></div>
+      <div class="active" id="hActive" hidden></div>
+    </div>
+
+    <div class="hgroup" id="hgMat">
+      <section id="h28Sec" hidden>
+        <div class="sec-head"><h2>Em maturação</h2><span class="sec-note">menos de 28 dias no ar · preencha só a leitura do dia marcado</span></div>
+        <ul class="wait28" id="h28"></ul>
+        <div class="card panel" id="raceBox">
+          <div class="sec-head"><b>Corrida dos primeiros 28 dias</b><span class="sec-note">views nos dias 7, 14, 21 e 28</span></div>
+          <div class="chart-wrap" id="raceWrap" tabindex="0" aria-label="Views de cada vídeo em maturação por dia de vida. Use as setas para percorrer os pontos.">
+            <div id="raceChart"></div>
+            <div class="tip" id="raceTip" hidden></div>
+          </div>
+          <p class="read" id="raceRead"></p>
+        </div>
+      </section>
+
+      <p class="empty" id="h28Empty" hidden>Nenhum vídeo em maturação. Quando você marcar um vídeo como postado no Estoque, ele aparece aqui para as leituras dos dias 7, 14, 21 e 28.</p>
+
+    </div>
+    <div class="hgroup" id="hgRes">
+      <section>
+        <div class="sec-head"><h2>Desempenho aos 28 dias</h2><span class="sec-note" id="hSub"></span></div>
+        <div class="tiles" id="tiles"></div>
+        <p class="note" id="hEmpty" hidden>Nenhum vídeo registrado ainda. Os resultados aparecem aqui depois do 28º dia de cada vídeo.</p>
+      </section>
+
+      <section id="hMultSec" hidden>
+        <div class="sec-head"><h2>Quanto cada vídeo rendeu</h2><span class="sec-note">views ÷ mediana do canal · escala log</span></div>
+        <div class="card panel">
+          <div class="keys"><div id="mKey"></div>
+            <div class="chart-key"><span><svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--fg)" stroke-opacity=".55" stroke-width="2"/></svg>mediana dos últimos 6 vídeos</span></div>
+          </div>
+          <div class="chart-wrap" id="mWrap" tabindex="0" aria-label="Multiplicador de cada vídeo por data de publicação. Use as setas para percorrer os vídeos.">
+            <div id="mChart"></div>
+            <div class="tip" id="mTip" hidden></div>
+          </div>
+          <p class="read" id="mRead"></p>
+        </div>
+      </section>
+
+      <div class="hgrid">
+        <section id="hEvSec" hidden>
+          <div class="sec-head"><h2>Distância do gancho</h2><span class="sec-note">postagem em relação ao evento</span></div>
+          <div class="card panel">
+            <div class="chart-wrap" id="eWrap" tabindex="0" aria-label="Multiplicador de cada vídeo pela distância entre a postagem e o evento. Use as setas para percorrer os vídeos.">
+              <div id="eChart"></div>
+              <div class="tip" id="eTip" hidden></div>
+            </div>
+            <p class="read" id="eRead"></p>
+            <p class="caveat" id="eCaveat" hidden></p>
+          </div>
+        </section>
+
+        <section id="hReachSec" hidden>
+          <div class="sec-head"><h2>Alcance e clique</h2><span class="sec-note">tracejado = mediana do canal</span></div>
+          <div class="card panel">
+            <div id="rKey"></div>
+            <div class="chart-wrap" id="rWrap" tabindex="0" aria-label="Impressões e CTR de cada vídeo. Use as setas para percorrer os vídeos.">
+              <div id="rChart"></div>
+              <div class="tip" id="rTip" hidden></div>
+            </div>
+            <p class="read" id="rRead"></p>
+          </div>
+        </section>
+
+        <section id="hCalSec" hidden>
+          <div class="sec-head"><h2>Previsão contra resultado</h2><span class="sec-note">nota na postagem × multiplicador aos 28 dias</span></div>
+          <div class="card panel">
+            <div class="chart-wrap" id="cWrap" tabindex="0" aria-label="Nota na postagem contra o multiplicador aos 28 dias. Use as setas para percorrer os vídeos.">
+              <div id="cChart"></div>
+              <div class="tip" id="cTip" hidden></div>
+            </div>
+            <p class="read" id="cRead"></p>
+          </div>
+        </section>
+
+        <section id="hGroupSec" hidden>
+          <div class="sec-head"><h2>Padrões</h2><span class="sec-note">traço = mediana · grupos com 3+ vídeos</span></div>
+          <div class="card panel grp">
+            <div class="row">
+              <div class="seg" role="group" aria-label="Agrupar por" id="hGroupBy"></div>
+              <div class="seg" role="group" aria-label="Métrica dos padrões" id="hGroupMet"></div>
+            </div>
+            <div class="chart-wrap" id="gWrap" tabindex="0" aria-label="Distribuição por grupo. Use as setas para percorrer os vídeos.">
+              <div id="gChart"></div>
+              <div class="tip" id="gTip" hidden></div>
+            </div>
+            <div id="hGroupNotes"></div>
+            <details class="table-box">
+              <summary>Ver em tabela</summary>
+              <div id="hGroups"></div>
+            </details>
+          </div>
+        </section>
+      </div>
+
+      <section id="hChartSec" hidden>
+        <div class="sec-head"><h2>Explorar métricas</h2><span class="sec-note">até 3 métricas</span></div>
+        <div class="card panel">
+          <div class="toolbar" id="hTools"></div>
+          <div class="chart-wrap" id="hWrap" tabindex="0" aria-label="Gráfico por vídeo. Use as setas para percorrer os vídeos.">
+            <div id="hChart"></div>
+            <div class="tip" id="hTip" hidden></div>
+          </div>
+        </div>
+      </section>
+
+      <details class="how">
+        <summary>Como ler o Histórico</summary>
+        <div class="how-body">
+          <p>Tudo é medido no 28º dia de cada vídeo, com os números do YouTube Studio; registro fechado não muda. Minutos por view = horas × 60 ÷ views; a % vista aparece quando a duração está preenchida.</p>
+          <p>Multiplicador = views ÷ mediana dos vídeos fechados nos últimos 12 meses (com menos de 15 na janela, todos; os ⭐ especiais ficam fora). Cada vídeo congela o multiplicador no dia em que fecha; os 44 fechados até 23/10/2026 congelaram com 106,5 views. Os filtros de saga, ícone, mês e período refazem os números e gráficos da aba só com os vídeos filtrados; marcar linhas na tabela destaca vídeos dentro do filtro.</p>
+          <p>Gancho é o evento datado mais forte ligado ao jogo até 90 dias antes ou depois da postagem, com o tamanho e a relação da fórmula. A cor de cada ponto é a fase do gancho na data da postagem: antecipação (7 dias ou mais antes), semana do evento, saturação (1 a 10 dias depois), eco (11 a 60) e eco longo (61 a 90).</p>
+        </div>
+      </details>
+    </div>
+    <div class="hgroup" id="hgTab">
+      <section id="hTableSec" hidden>
+        <div class="sec-head"><h2>Todos os vídeos postados</h2><span class="sec-note">fechados e em maturação · toque na linha para destacar no gráfico</span></div>
+        <div class="card panel">
+          <div class="tbl-tools">
+            <input id="hSearch" type="search" placeholder="Buscar por título, jogo ou saga" aria-label="Buscar vídeo" autocomplete="off">
+            <button type="button" class="btn-sm" id="hOnlyBtn" hidden>Só os do gráfico</button>
+            <span class="tbl-count" id="hTblCount"></span>
+          </div>
+          <div class="tbl-scroll" id="hTable"></div>
+        </div>
+      </section>
+
+      <section id="hDiarioSec" hidden>
+        <div class="sec-head"><h2>Diário das quartas</h2><span class="sec-note">o que a fila recomendou e o que foi postado</span></div>
+        <div class="card panel"><div class="tbl-scroll" id="hDiario"></div></div>
+      </section>
+    </div>
+    <div class="hgroup" id="hgDia" hidden aria-hidden="true">
+
+      <section id="hMesesSec" hidden>
+        <div class="sec-head"><h2>Totais do canal por mês</h2><span class="sec-note">enviados da IA do Studio</span></div>
+        <div class="card panel"><div class="tbl-scroll" id="hMeses"></div></div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="tabpane" id="tabCanal" role="tabpanel" aria-labelledby="tab-canal" hidden>
+    <p class="empty" id="cEmpty" hidden>Os totais do canal aparecem aqui mês a mês assim que os números do Studio forem enviados.</p>
+    <div class="cbody" id="cBody" hidden>
+      <section>
+        <div class="sec-head"><div><p class="eyebrow">Canal inteiro · só vídeos longos</p><h2>O canal mês a mês</h2></div></div>
+        <div class="tiles" id="cTiles"></div>
+      </section>
+      <div class="ctools">
+        <div class="seg" role="group" aria-label="Métrica" id="cMet"></div>
+        <div class="seg" role="group" aria-label="Período" id="cPer"></div>
+        <div class="seg" role="group" aria-label="Escala" id="cEsc"></div>
+      </div>
+      <div class="cgrid">
+        <section>
+          <div class="sec-head"><h2>No mês</h2><span class="sec-note" id="cMetU1"></span></div>
+          <div class="card panel">
+            <div class="chart-wrap" id="cWrap1" tabindex="0" aria-label="Total de cada mês. Use as setas para percorrer os meses.">
+              <div id="cChart1"></div>
+              <div class="tip" id="cTip1" hidden></div>
+            </div>
+            <p class="read" id="cRead1"></p>
+          </div>
+        </section>
+        <section>
+          <div class="sec-head"><h2>Acumulado</h2><span class="sec-note" id="cMetU2"></span></div>
+          <div class="card panel">
+            <div class="chart-wrap" id="cWrap2" tabindex="0" aria-label="Soma desde o primeiro mês. Use as setas para percorrer os meses.">
+              <div id="cChart2"></div>
+              <div class="tip" id="cTip2" hidden></div>
+            </div>
+            <p class="read" id="cRead2"></p>
+          </div>
+        </section>
+      </div>
+      <details class="table-box card panel">
+        <summary>Ver em tabela</summary>
+        <div class="tbl-scroll" id="cTable"></div>
+      </details>
+      <p class="note">Totais tirados da IA do YouTube Studio, só vídeos longos, sem Shorts. Inscritos de saldo são os ganhos menos os perdidos. O acumulado sempre soma desde o primeiro mês registrado, mesmo quando o período mostra só os últimos meses.</p>
+    </div>
+  </div>
+
+  <div class="tabpane" id="tabRel" role="tabpanel" aria-labelledby="tab-relatorio" hidden>
+    <p class="empty" id="relEmpty" hidden>O relatório de cada mês aparece aqui depois que os números do mês forem enviados do Studio.</p>
+    <div class="relbody" id="relBody" hidden>
+      <div class="card rel-hero">
+        <header class="rel-head">
+          <div class="rel-ttl"><div class="mast-k"><p class="eyebrow">Relatório mensal</p><span class="ver" id="relVer"></span></div><h2 id="relTitle"></h2><span class="sec-note" id="relMeta"></span></div>
+          <div class="rel-acts">
+            <select id="relMes" aria-label="Mês do relatório"></select>
+            <button type="button" class="btn-sm primary" id="relCopy">Copiar resumo</button>
+            <button type="button" class="btn-sm" id="relLink">Copiar link</button>
+          </div>
+        </header>
+        <div class="share-box" id="relShare" hidden>
+          <p class="note" id="relShareMsg"></p>
+          <textarea id="relShareTxt" rows="8" readonly aria-label="Texto do relatório para copiar"></textarea>
+        </div>
+        <p class="rel-lead" id="relResumo"></p>
+      </div>
+
+      <div class="tiles" id="relTiles"></div>
+
+      <div class="rel-grid">
+        <section id="relAvSec">
+          <div class="sec-head"><h2>Vídeos que fecharam 28 dias</h2><span class="sec-note">views ÷ mediana · escala log</span></div>
+          <div class="card panel">
+            <div id="relKey"></div>
+            <div class="chart-wrap" id="relWrap" tabindex="0" aria-label="Multiplicador dos vídeos do mês. Use as setas para percorrer.">
+              <div id="relChart"></div>
+              <div class="tip" id="relTip" hidden></div>
+            </div>
+            <details class="table-box"><summary>Ver em tabela, com as 5 métricas</summary><div class="tbl-scroll" id="relTable"></div></details>
+          </div>
+        </section>
+        <section id="relPostSec">
+          <div class="sec-head"><h2>Postagens do mês</h2><span class="sec-note">fase do gancho na data</span></div>
+          <div class="card"><ol class="posts" id="relPosts"></ol></div>
+        </section>
+      </div>
+
+      <section id="relFbSec">
+        <div class="sec-head"><h2 id="fbTitle">Feedback da fórmula</h2><span class="sec-note" id="fbSub"></span></div>
+        <div class="card panel">
+          <div class="fb-tiles" id="fbTiles"></div>
+          <div class="fb-split">
+            <div class="mview">
+              <div class="chart-wrap" id="fbWrap" tabindex="0" aria-label="Peso que a fórmula dá a cada fase contra o resultado mediano dos vídeos nessa fase. Use as setas para percorrer.">
+                <div id="fbChart"></div>
+                <div class="tip" id="fbTip" hidden></div>
+              </div>
+            </div>
+            <p class="read" id="fbRead"></p>
+          </div>
+          <div class="tbl-scroll" id="fbTable"></div>
+          <div class="fb-notes" id="fbNotes"></div>
+          <p class="caveat" id="fbCaveat"></p>
+        </div>
+      </section>
+
+      <section id="relV6Sec" hidden>
+        <div class="sec-head"><h2>Teste real, tráfego e mediana</h2><span class="sec-note">gravado pelo relatório do mês</span></div>
+        <div class="rel6" id="relV6"></div>
+      </section>
+
+      <section id="relPadSec">
+        <div class="sec-head"><h2>Padrões</h2><span class="sec-note">só grupos com 3 vídeos ou mais</span></div>
+        <div class="pads" id="relPad"></div>
+      </section>
+      <section id="relObsSec">
+        <div class="sec-head"><h2>Para observar no próximo mês</h2></div>
+        <div class="card panel"><ul class="obs" id="relObs"></ul></div>
+      </section>
+      <section id="relMatSec">
+        <div class="sec-head"><h2>Em maturação no fim do mês</h2><span class="sec-note">sem comparação até fechar</span></div>
+        <div class="card panel"><div class="tbl-scroll" id="relMat"></div></div>
+      </section>
+      <p class="note share-note">Para mandar aos editores: abra o menu Compartilhar deste artefato no Claude e dê acesso a eles. Quem recebe vê tudo em modo leitura e abre direto nesta aba; o link copiado aqui também cai no Relatório. O resumo copiado vai pronto para WhatsApp ou Discord.</p>
+    </div>
+  </div>
+
+  <p class="msg" id="globalMsg" hidden></p>
+  <div class="ed-ov" id="hEdOv" hidden>
+    <div class="ed-sheet" id="hEdSheet" role="dialog" aria-modal="true" aria-labelledby="hEdTitle">
+      <div class="ed-top">
+        <div class="ed-tx"><p class="eyebrow">Editar vídeo postado</p><h2 id="hEdTitle"></h2><p class="ed-sub" id="hEdSub"></p></div>
+        <button type="button" class="btn-sm" id="hEdClose">Fechar</button>
+      </div>
+      <p class="msg" id="hEdMsg" role="alert" hidden></p>
+      <div id="hEdBody"></div>
+    </div>
+  </div>
+  <input type="file" id="capaPicker" accept="image/*" hidden>
+</div>
+
+<script src="js/base.js"></script>
+<script src="js/estoque.js"></script>
+<script src="js/historico.js"></script>
+<script src="js/relatorio.js"></script>
+<script src="js/canal.js"></script>
+<script src="js/main.js"></script>
+
+</body></html>
